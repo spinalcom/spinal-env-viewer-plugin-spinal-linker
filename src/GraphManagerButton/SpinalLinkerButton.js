@@ -3,6 +3,7 @@ import {
   spinalContextMenuService
 } from "spinal-env-viewer-context-menu-service";
 import { spinalPanelManagerService } from "spinal-env-viewer-panel-manager-service";
+import {SPINAL_RELATION_TYPE} from 'spinal-env-viewer-graph-service'
 
 export default class SpinalLinkerButton extends SpinalContextApp {
 
@@ -24,7 +25,7 @@ export default class SpinalLinkerButton extends SpinalContextApp {
   }
 
   action( option ) {
-    const param = { relationName: "hasEndPoint", relationType: 0, selectedNode: option.selectedNode };
+    const param = { relationName: "hasEndPoint", relationType: SPINAL_RELATION_TYPE, selectedNode: option.selectedNode };
     spinalPanelManagerService.openPanel( "plugin-spinal-linker", param );
   }
 
