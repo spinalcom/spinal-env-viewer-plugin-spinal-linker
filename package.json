@@ -4,10 +4,10 @@
   "main": "index",
   "dependencies": {
     "spinal-env-viewer-context-menu-service": "git+https://github.com/spinalcom/spinal-env-viewer-context-menu-service.git",
-    "spinal-env-viewer-graph-service": "file:../spinal-env-viewer-graph-service",
+    "spinal-env-viewer-graph-service": "https://github.com/spinalcom/Spinal-Graph-Service.git",
     "spinal-env-viewer-panel-manager-service": "git+https://github.com/spinalcom/spinal-env-viewer-panel-manager-service.git",
     "spinal-env-viewer-panel-manager-service_spinalforgeextention": "git+https://github.com/spinalcom/spinal-env-viewer-panel-manager-service_spinalforgeextention.git",
-    "spinal-env-viewer-vue-components-lib": "file:../spinal-env-viewer-vue-components-lib",
+    "spinal-env-viewer-vue-components-lib": "https://github.com/spinalcom/spinal-env-viewer-vue-components-lib.git",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"
   },
