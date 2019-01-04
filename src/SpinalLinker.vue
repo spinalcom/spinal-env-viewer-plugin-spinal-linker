@@ -108,7 +108,6 @@
       },
 
       onPullNode: function ( event ) {
-        console.log( 'pull children', event );
         this.$store.commit( "PULL_CHILDREN", event );
       },
 
