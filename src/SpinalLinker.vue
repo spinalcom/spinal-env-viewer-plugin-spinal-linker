@@ -26,34 +26,35 @@
     <div class="plugin-spinal-linker">
 
         <div class="spinal-linker-body">
-            <child-inspector class="child-inspector"
-                             :name="getInspectedNodeName()"
-                             :child-info="getChildrenInfo()"
-                             :relationNames="relationNames"
-                             :default-relation-name="relationName"
-
-                             @get-children="getChildren"
-                             @remove-from-parent="onRemoveFromParent"
-                             @delete-node="onRemoveFromGraph"
-            />
             <div class="spinal-linker-graph-viewer">
                 <node-list
-                        @node-selected="onNodeSelected"
-                        @hide-bim-object="onHideBimObject"
-                        @pull-children="onPullNode"
-                        @active-node="onActiveNode"
 
+                        :active-nodes-id="activeNodesId"
                         :nodes="nodes"
-                        :context-ids="contextsId"
-                        :childrenIds="childrenIds"
-                        :active-node="activeNode"/>
+
+                        :contexts-id="contextsId"
+                        :get-children-id="getChildrenId"
+                        :getNode="getNode"
+                        :refresh="refreshed"
+
+                        :show-hide-bim-object="false"
+                        @click="onNodeSelected($event)"/>
+
             </div>
+
+            <child-inspector
+                    :child-info="getInspectedChildren()"
+                    :defaultRelationName="relationName"
+                    :name="inspectedNodeName"
+                    :relationNames="relationNames"
+                    @get-children="getChildren"
+                    @remove-from-parent="onRemoveFromGraph "
+            />
+
+
         </div>
-        <div v-on:click="addNode">
-            <button :click="addNode">
-                ajouter
-            </button>
-        </div>
+        <md-button @click="" class="md-raised spinal-linker-button">Link
+        </md-button>
     </div>
 </template>
 
@@ -69,104 +70,55 @@
     name: "SpinalLinker",
     components: { NodeList, ChildInspector },
     computed: mapState( [
+      'refreshed',
       'nodes',
       'contextsId',
-      'relationNames',
-      'inspectedNodeId',
+      'activeNodesId',
+      'inspectedNode',
+      'inspectedNodeName',
       'relationName',
-      'relationType',
-      'childrenIds',
-      'activeNode',
-      'linkerChildId'
+      'relationNames',
+      'inspectedChildren'
     ] ),
+    props: {},
     methods: {
-      getNode: ( id ) => {
-        return this.nodes[id];
+      getInspectedChildren: function () {
+        console.log( this.inspectedChildren );
+        return this.inspectedChildren;
+      },
+      getNode: function ( nodeId ) {
+        const node = this.nodes.get( nodeId );
+        if (typeof nodeId !== "undefined" && typeof node === "undefined") {
+          this.$store.dispatch( 'getNode', nodeId )
+        }
+        return node;
       },
 
-      getChildrenIds: () => {
-        return this.nodes[this.inspectedNodeId].childrenIds;
-      },
-
-      onRemoveFromGraph: function ( event ) {
-
-          this.$store.commit( 'REMOVE_FROM_GRAPH', event.get() );
-        SpinalGraphService.removeFromGraph( event.get() )
-
-      },
-      onRemoveFromParent: function( event ) {
-        // this.$store.commit( 'REMOVE_FROM_PARENT', event.get() );
-      },
-
-      onHideBimObject: function ( event ) {
-
+      getChildrenId: function ( nodeId ) {
+        return SpinalGraphService.getChildrenIds( nodeId );
       },
 
       onNodeSelected: function ( event ) {
         this.$store.dispatch( "onNodeSelected", event )
-
-      },
-
-      onPullNode: function ( event ) {
-        this.$store.commit( "PULL_CHILDREN", event );
-      },
-
-      onActiveNode: function ( event ) {
-        this.$store.commit( 'SET_ACTIVE_NODE', event )
-      },
-
-      isInContext: function ( childrenId, contextId ) {
-        let res = false;
-
-        for (let i = 0; i < childrenId.length && !res; i++) {
-          const childId = childrenId[i];
-          if (this.nodes.hasOwnProperty( childId )) {
-            const node = this.nodes[childId];
-            const contextIds = node.contextIds;
-            for (let j = 0; j < contextIds.length && !res; j++) {
-              if (contextId === contextIds[j])
-                res = true;
-            }
-          }
-        }
-
-        return res;
-      },
-
-      getInspectedNodeName: function () {
-        if (this.nodes.hasOwnProperty( this.inspectedNodeId )) {
-          return this.nodes[this.inspectedNodeId].name.get();
-
-        }
-        return "";
-      },
-
-      getChildrenInfo: function () {
-        const node = this.nodes[this.inspectedNodeId];
-        if (typeof node !== "undefined") {
-          const childrenIds = this.nodes[this.inspectedNodeId].childrenIds;
-          const childrenInfo = [];
-          for (let i = 0; i < childrenIds.length; i++) {
-            if (this.nodes.hasOwnProperty( childrenIds[i] ))
-              if (this.nodes[childrenIds[i]].hasOwnProperty( 'id' ))
-                childrenInfo.push( SpinalGraphService.getInfo( this.nodes[childrenIds[i]].id ) );
-              else
-                childrenInfo.push( SpinalGraphService.getInfo( this.nodes[childrenIds[i]].getId().get() ) )
-          }
-
-          return childrenInfo;
-        }
-        return []
-
+          .then()
+          .catch( e => console.error( e ) );
       },
 
       getChildren: function ( relationName ) {
         this.$store.dispatch( 'getChildren', relationName )
       },
 
-      addNode: function () {
-        this.$store.commit( 'LINK_NODE' )
+      onRemoveFromGraph: function ( event ) {
+
+        this.$store.commit( 'REMOVE_FROM_GRAPH', event.get() );
+        SpinalGraphService.removeFromGraph( event.get() )
+
+      },
+
+      addNode: function ( event ) {
+        this.$store.commit( 'LINK_NODE', event.get() );
       }
+
     }
   }
 </script>
@@ -193,5 +145,10 @@
         width: 50%;
     }
 
+    .spinal-linker-button {
+        right: 0;
+        bottom: 0;
+        position: absolute;
 
+    }
 </style>
