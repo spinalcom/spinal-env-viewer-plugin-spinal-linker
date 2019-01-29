@@ -1,27 +1,3 @@
-/*
- * Copyright 2019 SpinalCom - www.spinalcom.com
- *
- *  This file is part of SpinalCore.
- *
- *  Please read all of the following terms and conditions
- *  of the Free Software license Agreement ("Agreement")
- *  carefully.
- *
- *  This Agreement is a legally binding contract between
- *  the Licensee (as defined below) and SpinalCom that
- *  sets forth the terms and conditions that govern your
- *  use of the Program. By installing and/or using the
- *  Program, you agree to abide by all the terms and
- *  conditions stated or referenced herein.
- *
- *  If you do not agree to abide by these terms and
- *  conditions, do not demonstrate your acceptance and do
- *  not install or use the Program.
- *  You should have received a copy of the license along
- *  with this file. If not, see
- *  <http://resources.spinalcom.com/licenses.pdf>.
- */
-
 import Vuex from "vuex";
 import Vue from 'vue';
 import { SpinalGraphService } from "spinal-env-viewer-graph-service";
@@ -139,6 +115,7 @@ let store = new Vuex.Store( {
       for (let i = 0; i < relationNames.length; i++) {
         state.relationNames.push( relationNames[i] );
       }
+<<<<<<< HEAD
 
     },
   
@@ -181,6 +158,20 @@ let store = new Vuex.Store( {
             button: butcfg,
             badge_content: button.badgeCfg
           } );
+=======
+      console.log( state.relationNames );
+    },
+
+    SET_NODES: ( state, nodes ) => {
+      console.log( nodes );
+      for (let key in nodes) {
+        if (nodes.hasOwnProperty( key )) {
+          const node = nodes[key];
+          if (!state.nodes.hasOwnProperty( node.getId().get() )) {
+            state.nodes[node.getId().get()] = SpinalGraphService.getInfo( node.getId().get() );
+            state.childrenIds.push( node.getId().get() );
+          }
+>>>>>>> parent of c7d519f... [UPDATE]
         }
       }
       state.topBarButton = buttons;

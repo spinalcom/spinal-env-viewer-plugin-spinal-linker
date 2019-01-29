@@ -100,8 +100,17 @@
 
       onNodeSelected: function ( event ) {
         this.$store.dispatch( "onNodeSelected", event )
+<<<<<<< HEAD
           .then()
           .catch( e => console.error( e ) );
+=======
+
+      },
+
+      onPullNode: function ( event ) {
+        console.log( 'pull children', event );
+        this.$store.commit( "PULL_CHILDREN", event );
+>>>>>>> parent of c7d519f... [UPDATE]
       },
 
       getChildren: function ( relationName ) {
