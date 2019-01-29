@@ -156,6 +156,7 @@ let store = new Vuex.Store( {
       //cf GraphManager
     },
     ADD_NODE: ( state, node ) => {
+      console.log('asdsadsad')
       if (typeof node !== "undefined") {
         state.nodes.set( node.id.get(), node );
         state.refreshed = false;

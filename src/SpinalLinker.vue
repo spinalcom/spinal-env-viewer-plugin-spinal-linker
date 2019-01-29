@@ -53,7 +53,7 @@
 
 
         </div>
-        <md-button @click="" class="md-raised spinal-linker-button">Link
+        <md-button @click="addNode" class="md-raised spinal-linker-button">Link
         </md-button>
     </div>
 </template>
@@ -116,7 +116,8 @@
       },
 
       addNode: function ( event ) {
-        this.$store.commit( 'LINK_NODE', event.get() );
+        console.log('hello', this.activeNodesId)
+        this.$store.commit( 'LINK_NODE', this.activeNodesId[0] );
       }
 
     }
