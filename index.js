@@ -39,7 +39,6 @@ const extentions = SpinalForgeExtention.createExtention( {
         store.commit( 'SET_RELATION_TYPE', option.relationType );
         store.commit( 'SET_INSPECTED_NODE', option.selectedNode );
         store.dispatch( 'getChildren', option.relationName );
-  
         store.commit( 'ADD_NODES', SpinalGraphService.getNodes() );
         const graphId = SpinalGraphService.getGraph().info.id.get();
         SpinalGraphService.getChildren( graphId, [] ).then( children => {

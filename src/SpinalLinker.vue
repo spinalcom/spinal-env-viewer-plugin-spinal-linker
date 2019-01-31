@@ -28,22 +28,19 @@
         <div class="spinal-linker-body">
             <div class="spinal-linker-graph-viewer">
                 <node-list
-
                         :active-nodes-id="activeNodesId"
-                        :nodes="nodes"
-
                         :contexts-id="contextsId"
-                        :get-children-id="getChildrenId"
-                        :getNode="getNode"
-                        :refresh="refreshed"
 
+                        :has-child-in-context="hasChildInContext"
+                        :nodes="nodes"
                         :show-hide-bim-object="false"
-                        @click="onNodeSelected($event)"/>
 
+                        @click="onNodeSelected"
+                />
             </div>
 
             <child-inspector
-                    :child-info="getInspectedChildren()"
+                    :child-info="inspectedChildren"
                     :defaultRelationName="relationName"
                     :name="inspectedNodeName"
                     :relationNames="relationNames"
@@ -53,7 +50,8 @@
 
 
         </div>
-        <md-button @click="addNode" class="md-raised spinal-linker-button">Link
+        <md-button @click="addNode" class="md-raised spinal-linker-button">
+            Link
         </md-button>
     </div>
 </template>
@@ -63,40 +61,34 @@
     ChildInspector,
     NodeList
   } from "spinal-env-viewer-vue-components-lib";
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import { SpinalGraphService } from "spinal-env-viewer-graph-service";
+  function test() {
+    const res = {};
+    for (const arg of arguments) {
+      Object.assign( res, arg );
+    }
+    return res;
+  }
 
   export default {
     name: "SpinalLinker",
     components: { NodeList, ChildInspector },
-    computed: mapState( [
-      'refreshed',
-      'nodes',
-      'contextsId',
-      'activeNodesId',
-      'inspectedNode',
-      'inspectedNodeName',
-      'relationName',
-      'relationNames',
-      'inspectedChildren'
-    ] ),
-    props: {},
+    computed: test(
+      mapState( [
+        'refreshed',
+        'nodes',
+        'contextsId',
+        'activeNodesId',
+        'inspectedNode',
+        'inspectedNodeName',
+        'relationName',
+        'relationNames',
+        'inspectedChildren'
+      ] ),
+      mapGetters(['hasChildInContext'])
+    ),
     methods: {
-      getInspectedChildren: function () {
-        console.log( this.inspectedChildren );
-        return this.inspectedChildren;
-      },
-      getNode: function ( nodeId ) {
-        const node = this.nodes.get( nodeId );
-        if (typeof nodeId !== "undefined" && typeof node === "undefined") {
-          this.$store.dispatch( 'getNode', nodeId )
-        }
-        return node;
-      },
-
-      getChildrenId: function ( nodeId ) {
-        return SpinalGraphService.getChildrenIds( nodeId );
-      },
 
       onNodeSelected: function ( event ) {
         this.$store.dispatch( "onNodeSelected", event )
@@ -109,17 +101,18 @@
       },
 
       onRemoveFromGraph: function ( event ) {
-
         this.$store.commit( 'REMOVE_FROM_GRAPH', event.get() );
         SpinalGraphService.removeFromGraph( event.get() )
-
       },
 
       addNode: function ( event ) {
-        console.log('hello', this.activeNodesId)
         this.$store.commit( 'LINK_NODE', this.activeNodesId[0] );
       }
 
+    },
+
+    mounted() {
+      console.log('linker',this.nodes);
     }
   }
 </script>

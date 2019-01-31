@@ -48,14 +48,14 @@ function initialState() {
     relationName: '',
     relationType: '',
     activeNode: {},
-    nodes: new Map(),
+    nodes: {},
   };
 }
 
 let store = new Vuex.Store( {
   
   state: initialState(),
-
+  
   mutations: {
     /*********************/
     /* GRAPH VIEWER INIT */
@@ -64,27 +64,26 @@ let store = new Vuex.Store( {
       const contextId = context.id.get();
       if (state.contextId.includes( contextId )) {
         state.contextId.push( contextId );
-        if (!state.nodes.has( contextId )) {
-          state.nodes.set( contextId, context );
+        if (!state.nodes.hasOwnProperty( contextId )) {
+          state.nodes[contextId] = context;
         }
       }
     },
     ADD_CONTEXTS: ( state, contexts ) => {
-    
+      
       for (let i = 0; i < contexts.length; i++) {
         const contextId = contexts[i].id.get();
-      
+        
         if (!state.contextsId.includes( contextId )) {
           state.contextsId.push( contextId );
         }
-        if (!state.nodes.has( contextId )) {
-          state.nodes.set( contextId, contexts[i] );
+        if (!state.nodes.hasOwnProperty( contextId )) {
+          state.nodes[contextId] = contexts[i];
         }
       }
     },
-
-
-
+    
+    
     /******************************/
     /* SPINAL LINKER MAIN FEATURE */
     /******************************/
@@ -95,18 +94,18 @@ let store = new Vuex.Store( {
           state.relationName, state.relationType )
         .then( () => console.log( 'active', state.activeNodesId[0] ) );
     },
-
+    
     UNLINK_NODE: ( state, childId ) => {
       if (state.nodes.hasOwnProperty( state.inspectedNodeId ) && state.nodes.hasOwnProperty( childId )) {
         state.nodes[state.inspectedNodeId].removeChild( state.nodes[childId], state.relationName, state.relationType );
       }
     },
-
+    
     REMOVE_FROM_GRAPH: ( state, id ) => {
       SpinalGraphService.removeFromGraph( id );
-
+      
     },
-  
+    
     INIT: ( state, option ) => {
       for (let key in option) {
         if (option.hasOwnProperty( key ) && state.hasOwnProperty( key )) {
@@ -114,20 +113,19 @@ let store = new Vuex.Store( {
         }
       }
     },
-
-
+    
+    
     /*******************************/
     /* SPINAL LINKER CONFIGURATION */
     /*******************************/
     SET_RELATION_TYPE: ( state, relationType ) => {
-      console.log( 'ici' );
       state.relationType = relationType;
     },
-
+    
     SET_RELATION_NAME: ( state, relationName ) => {
       state.relationName = relationName;
     },
-
+    
     SET_INSPECTED_NODE: ( state, inspectedNode ) => {
       state.inspectedNodeId = inspectedNode.id.get();
       state.inspectedNode = inspectedNode;
@@ -139,37 +137,27 @@ let store = new Vuex.Store( {
       for (let i = 0; i < relationNames.length; i++) {
         state.relationNames.push( relationNames[i] );
       }
-
+      
     },
-  
+    
     SET_ACTIVE_NODE: ( state, activeNode ) => {
       state.activeNodesId = [activeNode];
     },
   
-    SET_SELECTED_NODE: ( state, option ) => {
-      state.selectedNode = option;
-      state.selectedNode.graph = state.graph;
-    },
-    GET_NODE: ( state ) => {
-      state.sync.splice( 0 );
-      state.refreshed = true;
-      //cf GraphManager
-    },
     ADD_NODE: ( state, node ) => {
-      console.log('asdsadsad')
-      if (typeof node !== "undefined") {
-        state.nodes.set( node.id.get(), node );
-        state.refreshed = false;
+      if (typeof node !== "undefined" && !state.nodes.hasOwnProperty( node.id.get() )) {
+        state.nodes[node.id.get()] = node;
       }
     },
     ADD_NODES: ( state, nodes ) => {
-      for (let i = 0; i < nodes.length; i++) {
-        const nodeId = nodes[i].id.get();
-        state.nodes.set( nodeId, nodes[i] );
+      for (const key in nodes){
+        if (nodes.hasOwnProperty( key )) {
+          state.nodes[key] = SpinalGraphService.getNode(key);
+        }
       }
-      state.refreshed = false;
+    
     },
-  
+    
     SET_GLOBAL_BAR: ( state, bts ) => {
       const buttons = [];
       for (let i = 0; i < bts.length; i++) {
@@ -186,39 +174,29 @@ let store = new Vuex.Store( {
       }
       state.topBarButton = buttons;
     },
-  
+    
     SET_GRAPH: ( state, graph ) => {
       state.graph = graph;
     },
-  
+    
     SET_NODE: ( state, node ) => {
       if (typeof node !== "undefined") {
-        state.nodes.set( node.id.get(), node );
-        state.refreshed = false;
+        state.nodes[node.id.get()] = node;
+        
       }
     },
     REMOVE_NODE: ( state, id ) => {
-      if (state.nodes.has( id )) {
+      if (state.nodes.hasOwnProperty( id )) {
         state.childrenIds.splice( state.childrenIds.indexOf( id ), 1 );
-        state.nodes.delete( id );
+        delete state.nodes[id];
       }
     },
     ADD_PARENT( state, nodeId ) {
       state.childrenPull.push( nodeId );
     },
-
-
-    SET_LINKER_CHILDREN: ( state, ids ) => {
-      while (state.linkerChildId.length > 0) {
-        state.linkerChildId.pop();
-      }
-
-      for (let i = 0; i < ids.length; i++) {
-        state.linkerChildId.push( ids[i] );
-      }
-    },
+    
+    
     SET_INSPECTED_CHILDREN: ( state, children ) => {
-      console.log( children );
       for (let i = 0; i < state.inspectedChildren.length; i++) {
         state.inspectedChildren.pop();
       }
@@ -226,30 +204,19 @@ let store = new Vuex.Store( {
         state.inspectedChildren.push( children[i] );
       }
     },
-
     
   },
-
+  getters: {
+    hasChildInContext: ( state ) => ( id, contextsId ) => {
+      return SpinalGraphService.hasChildInContext( id, contextsId );
+    }
+  },
   actions: {
-  
-    getNode( context, event ) {
-      SpinalGraphService.findNode( event ).then(
-        node => context.commit( 'ADD_NODE', node )
-      ).catch( e => console.error( e ) );
-    },
     onNodeSelected( context, event ) {
       const option = {};
-      option[OPTION_SELECTED_NODE_INFO] = context.state.nodes.get( event.nodeId );
-      option[OPTION_CONTEXT_INFO] = context.state.nodes.get( event.contextId );
+      option[OPTION_SELECTED_NODE_INFO] = context.state.nodes[event.nodeId];
+      option[OPTION_CONTEXT_INFO] = context.state.nodes[event.contextId];
       context.commit( "SET_ACTIVE_NODE", event.nodeId );
-      context.commit( "SET_SELECTED_NODE", option );
-    },
-    pullChildren( context, nodeId ) {
-      if (!context.state.childrenPull.includes( nodeId )) {
-        context.commit( 'ADD_PARENT', nodeId );
-        SpinalGraphService.getChildren( nodeId, [] )
-          .then( children => context.commit( 'ADD_NODES', children ) );
-      }
     },
     getChildren( context, relationName ) {
       SpinalGraphService.getChildren( context.state.inspectedNodeId, [relationName] )
@@ -258,7 +225,7 @@ let store = new Vuex.Store( {
         } );
     }
   }
-
+  
 } );
 
 export default store;
