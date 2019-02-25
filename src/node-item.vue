@@ -49,7 +49,8 @@
     data: function () {
       return {
         node: {},
-        open: false
+        open: false,
+        linked: false
       }
     },
     props: {
@@ -90,7 +91,8 @@
     asyncComputed: {
       canLink: {
         get: async function () {
-          if (this.node && this.node.hasOwnProperty( 'id' )) {
+          if (!this.linked && this.node && this.node.hasOwnProperty( 'id'
+          )) {
             let res = await SpinalGraphService
               .isChild( this.linkId, this.node.id.get(), [this.linkRelationName] );
             if (this.invertLink)
@@ -100,24 +102,24 @@
           }
           return false;
         },
-        default: false
+        default: false,
+        watch: ['linked']
       },
 
     },
     methods: {
       link: function () {
+
         if (this.invertLink) {
           SpinalGraphService.addChild( this.node.id.get(), this.linkId,
             this.linkRelationName, this.linkRelationType );
         } else {
-          console.log('link relation type', this.linkRelationType)
           SpinalGraphService.addChild( this.linkId, this.node.id.get(),
             this.linkRelationName, this.linkRelationType );
         }
+        this.linked = true;
       },
       unlink: function () {
-
-
         if (this.invertLink) {
           SpinalGraphService.removeChild( this.node.id.get(), this.linkId,
             this.linkRelationName, this.linkRelationType ).then( () => {
@@ -126,7 +128,6 @@
             .catch( e =>
               console.error( e ) );
         } else {
-
           SpinalGraphService.removeChild( this.linkId, this.node.id.get(),
             this.linkRelationName, this.linkRelationType )
             .then( () => {
@@ -136,6 +137,7 @@
               console.error( e )
             );
         }
+        this.linked = false;
       },
       toggle: function () {
         this.open = !this.open
