@@ -24,45 +24,26 @@
 
 <template>
     <div class="plugin-spinal-linker">
-
-        <div class="spinal-linker-body">
-            <div class="spinal-linker-graph-viewer">
-                <node-list
-                        :active-nodes-id="activeNodesId"
-                        :contexts-id="contextsId"
-
-                        :has-child-in-context="hasChildInContext"
-                        :nodes="nodes"
-                        :show-hide-bim-object="false"
-
-                        @click="onNodeSelected"
-                />
-            </div>
-
-            <child-inspector
-                    :child-info="inspectedChildren"
-                    :defaultRelationName="relationName"
-                    :name="inspectedNodeName"
-                    :relationNames="relationNames"
-                    @get-children="getChildren"
-                    @remove-from-parent="onRemoveFromGraph "
-            />
-
-
-        </div>
-        <md-button @click="addNode" class="md-raised spinal-linker-button">
-            Link
-        </md-button>
+        <h1>{{inspectedNode.name.get()}}</h1>
+        <node-item v-for="(contextId) in contextsId"
+                   :node-id="contextId"
+                   :invert-link="false"
+                   :link-id="inspectedNode.id.get()"
+                   :link-relation-name="relationName"
+                   :link-relation-type="relationType"
+        />
     </div>
 </template>
 
 <script>
+
   import {
-    ChildInspector,
-    NodeList
-  } from "spinal-env-viewer-vue-components-lib";
-  import { mapState, mapGetters } from 'vuex';
+    mapState,
+    mapGetters
+  } from 'vuex';
   import { SpinalGraphService } from "spinal-env-viewer-graph-service";
+  import NodeItem from "./node-item.vue";
+
   function test() {
     const res = {};
     for (const arg of arguments) {
@@ -73,20 +54,14 @@
 
   export default {
     name: "SpinalLinker",
-    components: { NodeList, ChildInspector },
+    components: { NodeItem, },
     computed: test(
       mapState( [
-        'refreshed',
-        'nodes',
         'contextsId',
-        'activeNodesId',
         'inspectedNode',
-        'inspectedNodeName',
         'relationName',
-        'relationNames',
-        'inspectedChildren'
+        'relationType'
       ] ),
-      mapGetters(['hasChildInContext'])
     ),
     methods: {
 
@@ -109,10 +84,6 @@
         this.$store.commit( 'LINK_NODE', this.activeNodesId[0] );
       }
 
-    },
-
-    mounted() {
-      console.log('linker',this.nodes);
     }
   }
 </script>

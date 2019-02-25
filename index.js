@@ -28,6 +28,9 @@ import "./src/GraphManagerButton/SpinalLinkerButton";
 import store from "./src/store";
 import Vue from 'vue';
 import { SpinalGraphService } from "spinal-env-viewer-graph-service";
+import AsyncComputed from 'vue-async-computed'
+Vue.use(AsyncComputed);
+
 
 const extentions = SpinalForgeExtention.createExtention( {
   name: "plugin-spinal-linker",
@@ -63,7 +66,7 @@ const extentions = SpinalForgeExtention.createExtention( {
   },
   style: {
     height: '80vh',
-    width: '780px',
+    width: '360px',
     top: '0px',
     left: '427px'
   }
