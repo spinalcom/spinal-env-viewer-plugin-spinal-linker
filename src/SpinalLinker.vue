@@ -24,7 +24,7 @@
 
 <template>
     <div class="plugin-spinal-linker">
-        <h1>{{inspectedNode.name.get()}}</h1>
+        <h1>{{name}}</h1>
         <node-item v-for="(contextId) in contextsId"
                    :node-id="contextId"
                    :invert-link="false"
@@ -36,54 +36,48 @@
 </template>
 
 <script>
-
-  import {
-    mapState,
-    mapGetters
-  } from 'vuex';
   import { SpinalGraphService } from "spinal-env-viewer-graph-service";
   import NodeItem from "./node-item.vue";
 
-  function test() {
-    const res = {};
-    for (const arg of arguments) {
-      Object.assign( res, arg );
-    }
-    return res;
-  }
 
   export default {
     name: "SpinalLinker",
     components: { NodeItem, },
-    computed: test(
-      mapState( [
-        'contextsId',
-        'inspectedNode',
-        'relationName',
-        'relationType'
-      ] ),
-    ),
-    methods: {
-
-      onNodeSelected: function ( event ) {
-        this.$store.dispatch( "onNodeSelected", event )
-          .then()
-          .catch( e => console.error( e ) );
-      },
-
-      getChildren: function ( relationName ) {
-        this.$store.dispatch( 'getChildren', relationName )
-      },
-
-      onRemoveFromGraph: function ( event ) {
-        this.$store.commit( 'REMOVE_FROM_GRAPH', event.get() );
-        SpinalGraphService.removeFromGraph( event.get() )
-      },
-
-      addNode: function ( event ) {
-        this.$store.commit( 'LINK_NODE', this.activeNodesId[0] );
+    data: function () {
+      return {
+        'contextsId': [],
+        'inspectedNode': '',
+        'relationName': '',
+        'relationType': '',
+      };
+    },
+    computed: {
+      name: function () {
+        if (this.inspectedNode && this.inspectedNode.hasOwnProperty( 'name' ))
+          return this.inspectedNode.name.get();
+        return ''
       }
+    },
+    methods: {
+      opened: function ( option ) {
 
+        this.relationName = option.relationName;
+        this.relationType = option.relationType;
+        this.inspectedNode = option.selectedNode;
+        this.contextsId = [];
+        const graphId = SpinalGraphService.getGraph().info.id.get();
+        SpinalGraphService.getChildren( graphId, [] ).then( children => {
+          for (let i = 0; i < children.length; i++) {
+            if (children[i].hasOwnProperty( 'id' ))
+              this.contextsId.push( children[i].id.get() )
+          }
+        } );
+      },
+      closed: function () {
+
+      },
+      removed: function () {
+      }
     }
   }
 </script>
@@ -94,26 +88,4 @@
         box-sizing: border-box;
     }
 
-    .spinal-linker-body {
-        display: flex;
-    }
-
-    .spinal-linker-graph-viewer {
-        border-left: 1px solid rgba(128, 128, 128, 0.64);
-        width: 50%;
-        overflow-y: auto;
-        overflow-x: hidden;
-
-    }
-
-    .child-inspector {
-        width: 50%;
-    }
-
-    .spinal-linker-button {
-        right: 0;
-        bottom: 0;
-        position: absolute;
-
-    }
 </style>

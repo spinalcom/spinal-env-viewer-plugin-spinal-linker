@@ -110,11 +110,14 @@
           SpinalGraphService.addChild( this.node.id.get(), this.linkId,
             this.linkRelationName, this.linkRelationType );
         } else {
+          console.log('link relation type', this.linkRelationType)
           SpinalGraphService.addChild( this.linkId, this.node.id.get(),
             this.linkRelationName, this.linkRelationType );
         }
       },
       unlink: function () {
+
+
         if (this.invertLink) {
           SpinalGraphService.removeChild( this.node.id.get(), this.linkId,
             this.linkRelationName, this.linkRelationType ).then( () => {
@@ -123,13 +126,15 @@
             .catch( e =>
               console.error( e ) );
         } else {
+
           SpinalGraphService.removeChild( this.linkId, this.node.id.get(),
             this.linkRelationName, this.linkRelationType )
             .then( () => {
               console.log( 'unlink' );
             } )
             .catch( e =>
-              console.error( e ) );
+              console.error( e )
+            );
         }
       },
       toggle: function () {

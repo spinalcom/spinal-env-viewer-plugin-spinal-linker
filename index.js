@@ -25,39 +25,16 @@
 import { SpinalForgeExtention } from "spinal-env-viewer-panel-manager-service_spinalforgeextention";
 import SpinalLinker from "./src/SpinalLinker.vue";
 import "./src/GraphManagerButton/SpinalLinkerButton";
-import store from "./src/store";
+
 import Vue from 'vue';
-import { SpinalGraphService } from "spinal-env-viewer-graph-service";
+
 import AsyncComputed from 'vue-async-computed'
 Vue.use(AsyncComputed);
 
 
 const extentions = SpinalForgeExtention.createExtention( {
   name: "plugin-spinal-linker",
-  vueMountComponent: Vue.extend( {
-    render: h => h( SpinalLinker ),
-    methods: {
-      opened: function ( option ) {
-        store.commit( 'SET_RELATION_NAME', option.relationName );
-        store.commit( 'SET_RELATION_TYPE', option.relationType );
-        store.commit( 'SET_INSPECTED_NODE', option.selectedNode );
-        store.dispatch( 'getChildren', option.relationName );
-        store.commit( 'ADD_NODES', SpinalGraphService.getNodes() );
-        const graphId = SpinalGraphService.getGraph().info.id.get();
-        SpinalGraphService.getChildren( graphId, [] ).then( children => {
-          store.commit( 'ADD_CONTEXTS', children );
-        } );
-
-
-      },
-      closed: function () {
-
-      },
-      removed: function () {
-      }
-    },
-    store
-  } ),
+  vueMountComponent: Vue.extend(  SpinalLinker ),
 
   panel: {
     title: "Spinal Linker",
