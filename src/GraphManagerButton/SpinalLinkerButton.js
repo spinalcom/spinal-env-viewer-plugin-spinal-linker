@@ -53,8 +53,8 @@ export default class SpinalLinkerButton extends SpinalContextApp {
 const TopBarName = 'GraphManagerSideBar';
 const circularMenuName = 'circularMenu';
 
-spinalContextMenuService.registerApp(TopBarName, new SpinalLinkerButton());
+spinalContextMenuService.registerApp(TopBarName, new SpinalLinkerButton(), [3]);
 spinalContextMenuService.registerApp(
   circularMenuName,
-  new SpinalLinkerButton()
+  new SpinalLinkerButton(), [3]
 );
