@@ -22,23 +22,32 @@ export default class SpinalLinkerButton extends SpinalContextApp {
   }
 
   isShown(option) {
-    if (option.selectedNode instanceof SpinalNode) {
-      return Promise.resolve(true);
-    } else {
-      if (
-        option.hasOwnProperty('selectedNode') &&
-        option.selectedNode.type.get() === 'BIMObject'
-      ) {
+    if (option.exist || option.selectedNode) {
+      if (option.selectedNode instanceof SpinalNode) {
+        // if (option.exist)
+        // console.log("linker circularmenu")
+        return Promise.resolve(true);
+        // else return Promise.resolve(-1)
+      } else {
+        if (
+          option.hasOwnProperty('selectedNode') &&
+          option.selectedNode.type.get() === 'BIMObject'
+        ) {
+          return Promise.resolve(true);
+        }
+
         return Promise.resolve(true);
       }
-
-      return Promise.resolve(true);
+    } else {
+      return Promise.resolve(-1);
     }
   }
 
   action(option) {
     let selectedNode = option.selectedNode;
+
     if (option.selectedNode instanceof SpinalNode) {
+      SpinalGraphService._addNode(option.selectedNode);
       selectedNode = SpinalGraphService.getInfo(option.selectedNode.getId());
     }
     const param = {
