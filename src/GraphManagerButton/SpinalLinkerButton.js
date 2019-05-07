@@ -16,8 +16,8 @@ export default class SpinalLinkerButton extends SpinalContextApp {
     super('SpinalLinker', 'Open SpinalLinker', {
       icon: 'link',
       icon_type: 'in',
-      backgroundColor: '#ffebf8',
-      fontColor: '#365bab',
+      backgroundColor: '#000000',
+      fontColor: '#ffffff',
     });
   }
 
