@@ -10,7 +10,9 @@ import {
   SPINAL_RELATION_PTR_LST_TYPE,
 } from 'spinal-env-viewer-graph-service';
 import SpinalNode from 'spinal-model-graph/build/Nodes/SpinalNode';
-
+import {
+  isShownParam
+} from '../utilities'
 export default class SpinalLinkerButton extends SpinalContextApp {
   constructor() {
     super('SpinalLinker', 'Open SpinalLinker', {
@@ -28,7 +30,7 @@ export default class SpinalLinkerButton extends SpinalContextApp {
       } else {
         if (
           option.hasOwnProperty('selectedNode') &&
-          option.selectedNode.type.get() === 'BIMObject'
+          isShownParam.includes(option.selectedNode.type.get())
         ) {
           return Promise.resolve(true);
         }
