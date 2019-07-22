@@ -24,10 +24,7 @@ export default class SpinalLinkerButton extends SpinalContextApp {
   isShown(option) {
     if (option.exist || option.selectedNode) {
       if (option.selectedNode instanceof SpinalNode) {
-        // if (option.exist)
-        // console.log("linker circularmenu")
         return Promise.resolve(true);
-        // else return Promise.resolve(-1)
       } else {
         if (
           option.hasOwnProperty('selectedNode') &&
@@ -35,12 +32,9 @@ export default class SpinalLinkerButton extends SpinalContextApp {
         ) {
           return Promise.resolve(true);
         }
-
-        return Promise.resolve(true);
       }
-    } else {
-      return Promise.resolve(-1);
     }
+    return Promise.resolve(-1);
   }
 
   action(option) {
