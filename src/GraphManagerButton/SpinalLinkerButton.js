@@ -7,9 +7,9 @@ import {
 } from 'spinal-env-viewer-panel-manager-service';
 import {
   SpinalGraphService,
+  SpinalNode,
   SPINAL_RELATION_PTR_LST_TYPE,
 } from 'spinal-env-viewer-graph-service';
-import SpinalNode from 'spinal-model-graph/build/Nodes/SpinalNode';
 import {
   isShownParam
 } from '../utilities'
