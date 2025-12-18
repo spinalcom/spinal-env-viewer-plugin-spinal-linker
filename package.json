@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-viewer-plugin-spinal-linker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index",
   "dependencies": {
     "spinal-env-viewer-context-menu-service": "git+https://github.com/spinalcom/spinal-env-viewer-context-menu-service.git",
