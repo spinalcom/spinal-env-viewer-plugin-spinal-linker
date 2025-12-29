@@ -74,7 +74,3 @@ const TopBarName = 'GraphManagerSideBar';
 const circularMenuName = 'circularMenu';
 
 spinalContextMenuService.registerApp(TopBarName, new SpinalLinkerButton(), [3]);
-spinalContextMenuService.registerApp(
-  circularMenuName,
-  new SpinalLinkerButton(), [3]
-);
