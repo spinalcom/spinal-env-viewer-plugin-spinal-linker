@@ -30,8 +30,6 @@ import {
   spinalPanelManagerService,
 } from 'spinal-env-viewer-panel-manager-service';
 import {
-  SpinalGraphService,
-  SpinalNode,
   SPINAL_RELATION_PTR_LST_TYPE,
 } from 'spinal-env-viewer-graph-service';
 
@@ -45,21 +43,13 @@ export default class SpinalLinkerButton extends SpinalContextApp {
     });
   }
 
-  isShown(option) {
+  isShown() {
     return Promise.resolve(true);
   }
 
   action(option) {
     let selectedNode = option.selectedNode;
     let selectedContext = option.context;
-    if (option.selectedNode instanceof SpinalNode) {
-      SpinalGraphService._addNode(option.selectedNode);
-      selectedNode = SpinalGraphService.getInfo(option.selectedNode.getId());
-    }
-    if (option.selectedContext instanceof SpinalNode) {
-      SpinalGraphService._addNode(option.selectedContext);
-      selectedContext = SpinalGraphService.getInfo(option.selectedContext.getId());
-    }
     const param = {
       relationName: 'hasEndPoint',
       relationType: SPINAL_RELATION_PTR_LST_TYPE,
@@ -70,7 +60,6 @@ export default class SpinalLinkerButton extends SpinalContextApp {
   }
 }
 
-const TopBarName = 'GraphManagerSideBar';
-const circularMenuName = 'circularMenu';
+const barName = 'GraphManagerSideBar';
 
-spinalContextMenuService.registerApp(TopBarName, new SpinalLinkerButton(), [3]);
+spinalContextMenuService.registerApp(barName, new SpinalLinkerButton(), [3]);
